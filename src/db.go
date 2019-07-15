@@ -4,6 +4,7 @@ import (
 	"fmt"
 	redis "github.com/go-redis/redis"
 )
+
 func RedisNewClient() *redis.Client {
 	client := redis.NewClient(&redis.Options{
 		Addr:     "docker-server.cloudapp.net:6379",
@@ -17,21 +18,19 @@ func RedisNewClient() *redis.Client {
 	return client
 }
 
-
 // init seeds some ridiculous initial data
 func init() {
 	CreateUser(UserObject{
 		Fname: "Debapriya",
 		Lname: "Das",
-		Age : 24,
+		Age:   24,
 	})
 	CreateUser(UserObject{
 		Fname: "Anuja",
 		Lname: "Saha",
-		Age : 21,
+		Age:   21,
 	})
 }
-
 
 func CreateUser(u UserObject) {
 
@@ -44,8 +43,8 @@ func CreateUser(u UserObject) {
 	// HandleError(err)
 	reply, err := c.HMSet(uuid, UserMap(&user)).Result()
 	HandleError(err)
+	PublishToQueue(uuid)
 
 	fmt.Println("POST", reply, uuid)
 
 }
-
